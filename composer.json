@@ -11,5 +11,10 @@
             "name": "selmonal",
             "email": "selmonal@gmail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "Plus\\": "src/"
+        }
+    }
 }
