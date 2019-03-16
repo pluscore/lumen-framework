@@ -13,7 +13,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->routeMiddleware([
+            'admin' => \Plus\Auth\Http\Middleware\Admin::class,
+        ]);
     }
 
     /**
