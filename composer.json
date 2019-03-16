@@ -1,0 +1,15 @@
+{
+    "name": "pluscore/lumen-framework",
+    "description": "Basic setup for a pluscore service.",
+    "type": "library",
+    "require": {
+        "laravel/lumen-framework": "5.8.*"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "selmonal",
+            "email": "selmonal@gmail.com"
+        }
+    ]
+}
