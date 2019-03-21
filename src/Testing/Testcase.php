@@ -65,7 +65,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 
     public function actingAsGuest()
     {
-        Auth::shouldReceive('user')->once()->andReturn(null);
+        Auth::shouldReceive('user')->andReturn(null);
 
         return $this;
     }
@@ -74,7 +74,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
     {
         $this->user = $this->makeUser();
 
-        Auth::shouldReceive('user')->once()->andReturn($this->user);
+        Auth::shouldReceive('user')->andReturn($this->user);
 
         return $this;
     }
@@ -83,7 +83,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
     {
         $this->user = $this->makeUser(['is_admin' => true]);
 
-        Auth::shouldReceive('user')->once()->andReturn($this->user);
+        Auth::shouldReceive('user')->andReturn($this->user);
 
         return $this;
     }
@@ -96,7 +96,7 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
             ]
         ]);
 
-        Auth::shouldReceive('user')->once()->andReturn($this->user);
+        Auth::shouldReceive('user')->andReturn($this->user);
 
         return $this;
     }
