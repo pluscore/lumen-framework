@@ -7,6 +7,7 @@ use Plus\Auth\Facades\Auth;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use PHPUnit\Framework\Assert;
 use Plus\Auth\User;
+use Mockery
 
 abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 {
