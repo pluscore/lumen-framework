@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->app->routeMiddleware([
             'admin' => \Plus\Auth\Http\Middleware\Admin::class,
+            'backend' => \Plus\Auth\Http\Middleware\BackendService::class,
         ]);
     }
 
