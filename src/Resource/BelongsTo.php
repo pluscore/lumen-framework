@@ -5,6 +5,7 @@ namespace Plus\Resource;
 use Zttp\Zttp;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Support\Facades\App;
 
 class BelongsTo
 {
