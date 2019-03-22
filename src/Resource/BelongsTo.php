@@ -4,7 +4,7 @@ namespace Plus\Resource;
 
 use Zttp\Zttp;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class BelongsTo
 {
@@ -62,7 +62,7 @@ class BelongsTo
      *
      * @return void
      */
-    public function __construct($serviceHostName, $resourcePath, Model $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct($serviceHostName, $resourcePath, EloquentModel $child, $foreignKey, $ownerKey, $relationName)
     {
         $this->serviceHostName = $serviceHostName;
         $this->resourcePath = $resourcePath;
