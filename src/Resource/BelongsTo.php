@@ -161,13 +161,21 @@ class BelongsTo
     {
         $url = $this->getUri().'?'.http_build_query($this->params);
 
-        $response = Zttp::withHeaders(['Accept' => 'application/json'])->get($url);
+        try {
+            $response = Zttp::withHeaders(['Accept' => 'application/json'])->get($url);
 
-        if ($response->isSuccess()) {
-            return collect($response->json()['data']);
+            if ($response->isSuccess()) {
+                return collect($response->json()['data']);
+            }
+
+            throw new \RuntimeException($response->json());
+        } catch (\Zttp\ConnectionException $exception) {
+            if (! App::environment('testing')) {
+                throw $exception;
+            }
+
+            return collect();
         }
-
-        throw new \RuntimeException($response->json());
     }
 
     /**
