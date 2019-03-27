@@ -1,23 +1,18 @@
 <?php
 
-namespace Plus\Resource;
+namespace Plus\Api;
 
 use Zttp\Zttp;
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Support\Facades\App;
 
-class BelongsTo
+class BelongsToResource
 {
     /**
-     * The host name to service.
+     * Resource class name.
      */
-    protected $serviceHostName;
-
-    /**
-     * The resource path to service.
-     */
-    protected $resourcePath;
+    protected $resourceClass;
 
     /**
      * The child model instance of the relation.
@@ -55,18 +50,17 @@ class BelongsTo
     /**
      * Create a new belongs to relationship instance.
      *
-     * @param  string  $serviceHostName
-     * @param  string  $resourcePath
+     * @param  string  $resourceClass
      * @param  string  $foreignKey
      * @param  string  $ownerKey
      * @param  string  $relationName
      *
      * @return void
      */
-    public function __construct($serviceHostName, $resourcePath, EloquentModel $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct($resourceClass, EloquentModel $child, $foreignKey, $ownerKey, $relationName)
     {
-        $this->serviceHostName = $serviceHostName;
-        $this->resourcePath = $resourcePath;
+        $this->resourceClass = $resourceClass;
+        $this->request = new Request(new $resourceClass);
         $this->ownerKey = $ownerKey;
         $this->relationName = $relationName;
         $this->foreignKey = $foreignKey;
@@ -86,9 +80,9 @@ class BelongsTo
      */
     public function addEagerConstraints(array $models)
     {
-        $this->params[$this->ownerKey] = array_unique(
-            array_pluck($models, $this->foreignKey)
-        );
+        $id = array_unique(array_pluck($models, $this->foreignKey));
+
+        $this->request->filter($this->ownerKey, implode(',', $id));
     }
 
     /**
@@ -111,7 +105,7 @@ class BelongsTo
         $dictionary = [];
 
         foreach ($results as $result) {
-            $dictionary[$result[$owner]] = new Model($result);
+            $dictionary[$result->$owner] = $result;
         }
 
         // Once we have the dictionary constructed, we can loop through all the parents
@@ -158,34 +152,8 @@ class BelongsTo
      * @param  array  $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get($columns = ['*'])
+    public function get()
     {
-        $url = $this->getUri().'?'.http_build_query($this->params);
-
-        try {
-            $response = Zttp::withHeaders(['Accept' => 'application/json'])->get($url);
-
-            if ($response->isSuccess()) {
-                return collect($response->json()['data']);
-            }
-
-            throw new \RuntimeException($response->json());
-        } catch (\Zttp\ConnectionException $exception) {
-            if (! App::environment('testing')) {
-                throw $exception;
-            }
-
-            return collect();
-        }
-    }
-
-    /**
-     * Get uri to the resource.
-     *
-     * @return string
-     */
-    public function getUri()
-    {
-        return "http://{$this->serviceHostName}/{$this->resourcePath}";
+        return $this->request->get();
     }
 }
