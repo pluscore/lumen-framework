@@ -4,7 +4,6 @@ namespace Plus\Resource;
 
 use Illuminate\Contracts\Support\Arrayable;
 
-
 class Model implements Arrayable
 {
     /**
@@ -16,7 +15,7 @@ class Model implements Arrayable
 
     /**
      * Construct ResourceModel.
-     * 
+     *
      * @param array $attributes
      */
     public function __construct($attributes)
