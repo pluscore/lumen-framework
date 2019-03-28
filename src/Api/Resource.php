@@ -123,7 +123,7 @@ abstract class Resource implements Arrayable
     public static function __callStatic($name, $arguments)
     {
         return call_user_func_array(
-            [$this->newRequest(), $name],
+            [(new static)->newRequest(), $name],
             $arguments
         );
     }

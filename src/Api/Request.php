@@ -73,11 +73,11 @@ class Request
      *
      * @return string
      */
-    public function url()
+    public function url($key = null)
     {
         $query = http_build_query($this->query);
 
-        return $this->url.($query ? "?{$query}" : '');
+        return $this->url.($key ? "/{$key}" : '').($query ? "?{$query}" : '');
     }
 
     /**
@@ -108,7 +108,32 @@ class Request
     public function get()
     {
         return $this->isFaking() ?
-            $this->getFaker()->get($this) : $this->send();
+            $this->getFaker()->get($this) : $this->mapResourceArray($this->send($this->url()));
+    }
+
+    public function mapResourceArray($array)
+    {
+        return collect($array)->map(function ($attributes) {
+            return $this->mapResource($attributes);
+        });
+    }
+
+    public function mapResource($attributes)
+    {
+        return $this->resource->make($attributes);
+    }
+
+    /**
+     * Find a resource by its key.
+     *
+     * @param  string $key
+     * @return Resource
+     */
+    public function find($key)
+    {
+        return $this->mapResource(
+            $this->send($this->url($key))
+        );
     }
 
     /**
@@ -116,14 +141,12 @@ class Request
      *
      * @return Collection
      */
-    public function send()
+    public function send($url)
     {
-        $response = Zttp::withHeaders(['Accept' => 'application/json'])->get($this->url());
+        $response = Zttp::withHeaders(['Accept' => 'application/json'])->get($url);
 
         if ($response->isOk()) {
-            return collect($response->json()['data'])->map(function ($item) {
-                return $this->resource->make($item);
-            });
+            return $response->json()['data'];
         }
 
         throw new RuntimeException($response->body());
