@@ -59,7 +59,7 @@ class Request
      */
     public function getFaker()
     {
-        return get_class($this->resource)::$faker;
+        return Resource::$faker[get_class($this->resource)];
     }
 
     /**
@@ -69,7 +69,7 @@ class Request
      */
     public function isFaking()
     {
-        return $this->getFaker() !== null;
+        return isset(Resource::$faker[get_class($this->resource)]);
     }
 
     /**
@@ -90,7 +90,7 @@ class Request
      */
     public function send()
     {
-        $response = Zttp::withHeader(['Accept' => 'application/json'])->get($this->resource->path());
+        $response = Zttp::withHeader(['Accept' => 'application/json'])->get($this->resource->url());
 
         if ($response->isOk()) {
             return collect($response->json()['data'])->map(function ($item) {

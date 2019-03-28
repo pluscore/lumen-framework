@@ -9,12 +9,17 @@ class UserResource extends Resource
 {
     protected $path = 'http://server/api/users';
 
-    public function mock(Generator $faker)
+    public static function mock(Generator $faker)
     {
         return [
             'id' => $faker->uuid,
             'name' => $faker->name,
             'email' => $faker->email,
+            'avatar_path' => $faker->imageUrl,
+            'profile_picture' => [
+                'sm' => $faker->imageUrl,
+                'md' => $faker->imageUrl,
+            ]
         ];
     }
 }

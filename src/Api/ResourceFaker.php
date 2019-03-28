@@ -59,8 +59,8 @@ class ResourceFaker
         );
 
         $this->collection->push([
-            'path' => $this->resource->path(),
-            'resource' => $this->resource->make($attributes),
+            'url' => $this->resource->url(),
+            'resource' => $resource = $this->resource->make($attributes),
         ]);
 
         return $resource;
@@ -75,7 +75,7 @@ class ResourceFaker
     public function get(Resource $resource)
     {
         return $this->collection->filter(function ($item) use ($resource) {
-            return Str::contains($resource->path(), $item['path']);
+            return Str::contains($resource->url(), $item['url']);
         })->pluck('resource');
     }
 }

@@ -12,7 +12,7 @@ abstract class Resource implements Arrayable
      *
      * @var ResourceFaker
      */
-    public static $faker;
+    public static $faker = [];
 
     /**
      * The resource attributes.
@@ -26,7 +26,7 @@ abstract class Resource implements Arrayable
      *
      * @var string
      */
-    protected $path;
+    protected $url;
 
     /**
      * Query string to the resource.
@@ -53,23 +53,25 @@ abstract class Resource implements Arrayable
      */
     public static function fake()
     {
-        if (! static::$faker) {
-            static::$faker = new ResourceFaker(new static);
+        $class = get_called_class();
+
+        if (! isset(static::$faker[$class])) {
+            static::$faker[$class] = new ResourceFaker(new static);
         }
 
-        return static::$faker;
+        return static::$faker[$class];
     }
 
     /**
-     * Get the url to the resource. Build full url with path and queryt string.
+     * Get the url to the resource. Build full url with url and queryt string.
      *
      * @return string
      */
-    public function path()
+    public function url()
     {
         $query = http_build_query($this->query);
 
-        return $this->path.($query ? "?{$query}" : '');
+        return $this->url.($query ? "?{$query}" : '');
     }
 
     /**
@@ -109,7 +111,7 @@ abstract class Resource implements Arrayable
      * @param  Generator $faker
      * @return array
      */
-    public function mock(Generator $faker)
+    public static function mock(Generator $faker)
     {
         throw new \Exception('Mock not supported in this resource.');
     }

@@ -58,7 +58,7 @@ class BelongsToResource
     public function __construct($resourceClass, Model $child, $foreignKey, $ownerKey, $relationName)
     {
         $this->resourceClass = $resourceClass;
-        $this->request = new Request(new $resourceClass);
+        $this->request = (new $resourceClass)->newRequest();
         $this->ownerKey = $ownerKey;
         $this->relationName = $relationName;
         $this->foreignKey = $foreignKey;

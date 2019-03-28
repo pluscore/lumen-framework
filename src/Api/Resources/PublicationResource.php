@@ -9,7 +9,7 @@ class PublicationResource extends Resource
 {
     protected $path = 'http://server/api/catalog/backend/publications';
 
-    public function mock(Generator $faker)
+    public static function mock(Generator $faker)
     {
         return [
             'id' => $faker->uuid,
