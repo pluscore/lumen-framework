@@ -108,17 +108,29 @@ class Request
     public function get()
     {
         return $this->isFaking() ?
-            $this->getFaker()->get($this) : $this->mapResourceArray($this->send($this->url()));
+            $this->getFaker()->get($this) : $this->convertResourceArray($this->send($this->url()));
     }
 
-    public function mapResourceArray($array)
+    /**
+     * Map raw array of resource attributes to resource collection.
+     *
+     * @param  array $array
+     * @return Collection
+     */
+    public function convertResourceArray($array)
     {
         return collect($array)->map(function ($attributes) {
-            return $this->mapResource($attributes);
+            return $this->convertResource($attributes);
         });
     }
 
-    public function mapResource($attributes)
+    /**
+     * Convert an raw attributes to a resource.
+     *
+     * @param  array $attributes
+     * @return Resource
+     */
+    public function convertResource($attributes)
     {
         return $this->resource->make($attributes);
     }
@@ -131,7 +143,7 @@ class Request
      */
     public function find($key)
     {
-        return $this->mapResource(
+        return $this->convertResource(
             $this->send($this->url($key))
         );
     }

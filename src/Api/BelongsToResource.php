@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class BelongsToResource
 {
     /**
-     * Resource class name.
+     * Request.
      */
-    protected $resourceClass;
+    protected $request;
 
     /**
      * The child model instance of the relation.
@@ -39,26 +39,18 @@ class BelongsToResource
     protected $relationName;
 
     /**
-     * Params that filtering the service.
-     *
-     * @var array
-     */
-    protected $params;
-
-    /**
      * Create a new belongs to relationship instance.
      *
-     * @param  string  $resourceClass
+     * @param  Request  $request
      * @param  string  $foreignKey
      * @param  string  $ownerKey
      * @param  string  $relationName
      *
      * @return void
      */
-    public function __construct($resourceClass, Model $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct(Request $request, Model $child, $foreignKey, $ownerKey, $relationName)
     {
-        $this->resourceClass = $resourceClass;
-        $this->request = (new $resourceClass)->newRequest();
+        $this->request = $request;
         $this->ownerKey = $ownerKey;
         $this->relationName = $relationName;
         $this->foreignKey = $foreignKey;
@@ -68,6 +60,19 @@ class BelongsToResource
         // one is we will create a "child" variable for much better readability.
         $this->child = $child;
         $this->params = [];
+    }
+
+    /**
+     * Add include param to the request.
+     *
+     * @param  string $value
+     * @return $this
+     */
+    public function include($value)
+    {
+        $this->request->include($value);
+
+        return $this;
     }
 
     /**

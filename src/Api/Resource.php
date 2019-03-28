@@ -63,6 +63,16 @@ abstract class Resource implements Arrayable
     }
 
     /**
+     * Get key name of the resource.
+     *
+     * @return string
+     */
+    public function getKeyName()
+    {
+        return 'id';
+    }
+
+    /**
      * Convert the resource to an array.
      *
      * @return array
