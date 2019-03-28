@@ -3,7 +3,6 @@
 namespace Plus\Auth\Http\Middleware;
 
 use Closure;
-use Illuminate\Contracts\Auth\Factory as Auth;
 use Illuminate\Support\Facades\Request;
 
 class BackendService

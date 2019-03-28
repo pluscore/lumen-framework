@@ -3,20 +3,41 @@
 namespace Plus\Api;
 
 use Faker\Generator;
-use Illuminate\Support\Collection;
-use Plus\Resource\Model;
+use Illuminate\Support\Str;
 
 class ResourceFaker
 {
+    /**
+     * The resource that faked.
+     *
+     * @var Resource
+     */
     private $resource;
+
+    /**
+     * Store collection for faked resources.
+     *
+     * @var Collection
+     */
     public $collection;
 
+    /**
+     * Construct ResourceFaker.
+     *
+     * @param Resource $resource
+     */
     public function __construct(Resource $resource)
     {
         $this->resource = $resource;
-        $this->collection = new Collection;
+        $this->collection = collect();
     }
 
+    /**
+     * Add include query to the resource.
+     *
+     * @param  string $value
+     * @return $this
+     */
     public function include($value)
     {
         $this->resource->query['include'] = $value;
@@ -24,6 +45,12 @@ class ResourceFaker
         return $this;
     }
 
+    /**
+     * Create an faked resource.
+     *
+     * @param  array  $overrides
+     * @return Resource
+     */
     public function create($overrides = [])
     {
         $attributes = array_merge(
@@ -31,13 +58,24 @@ class ResourceFaker
             $overrides
         );
 
-        $class = get_class($this->resource);
-
         $this->collection->push([
             'path' => $this->resource->path(),
-            'resource' => $resource = new $class($attributes),
+            'resource' => $this->resource->make($attributes),
         ]);
 
         return $resource;
+    }
+
+    /**
+     * Get faked resources for the resource.
+     *
+     * @param  Resource $resource
+     * @return Collection
+     */
+    public function get(Resource $resource)
+    {
+        return $this->collection->filter(function ($item) use ($resource) {
+            return Str::contains($resource->path(), $item['path']);
+        })->pluck('resource');
     }
 }

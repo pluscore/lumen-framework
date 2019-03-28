@@ -4,22 +4,53 @@ namespace Plus\Api;
 
 use Faker\Generator;
 use Illuminate\Contracts\Support\Arrayable;
-use Zttp\Zttp;
 
 abstract class Resource implements Arrayable
 {
-    static $faker;
+    /**
+     * The faker instance for the resource type.
+     *
+     * @var ResourceFaker
+     */
+    public static $faker;
+
+    /**
+     * The resource attributes.
+     *
+     * @var array
+     */
     private $attributes;
 
+    /**
+     * The http url to the resource.
+     *
+     * @var string
+     */
     protected $path;
+
+    /**
+     * Query string to the resource.
+     *
+     * @var array
+     */
     public $query;
 
+    /**
+     * Construct Resource.
+     *
+     * @param array $attributes
+     */
     public function __construct($attributes = [])
     {
         $this->attributes = $attributes;
         $this->query = [];
     }
 
+    /**
+     * Enable the fake mode and get the faker.
+     *
+     * @return ResourceFaker
+     */
     public static function fake()
     {
         if (! static::$faker) {
@@ -29,6 +60,11 @@ abstract class Resource implements Arrayable
         return static::$faker;
     }
 
+    /**
+     * Get the url to the resource. Build full url with path and queryt string.
+     *
+     * @return string
+     */
     public function path()
     {
         $query = http_build_query($this->query);
@@ -36,30 +72,69 @@ abstract class Resource implements Arrayable
         return $this->path.($query ? "?{$query}" : '');
     }
 
+    /**
+     * Convert the resource to an array.
+     *
+     * @return array
+     */
     public function toArray()
     {
         return $this->attributes;
     }
 
+    /**
+     * Make a request instance for the resource.
+     *
+     * @return Request
+     */
     public function newRequest()
     {
         return new Request(new static);
     }
 
+    /**
+     * Make a new instance of the resource.
+     *
+     * @param  array  $attributes
+     * @return Resource
+     */
+    public function make($attributes = [])
+    {
+        return new static($attributes);
+    }
+
+    /**
+     * Generate a mock attributes for a resource.
+     *
+     * @param  Generator $faker
+     * @return array
+     */
     public function mock(Generator $faker)
     {
         throw new \Exception('Mock not supported in this resource.');
     }
 
+    /**
+     * Map property call to resource attribute.
+     *
+     * @param  string $field
+     * @return mixed
+     */
     public function __get($field)
     {
         return $this->attributes[$field];
     }
 
+    /**
+     * @param  string $name
+     * @param  mixed $arguments
+     * @return mixed
+     */
     public static function __callStatic($name, $arguments)
     {
         return call_user_func_array(
-            [$this->newRequest(), $name], $arguments
+            [$this->newRequest(), $name],
+            $arguments
         );
     }
 }

@@ -2,10 +2,8 @@
 
 namespace Plus\Api;
 
-use Zttp\Zttp;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
-use Illuminate\Support\Facades\App;
+use Illuminate\Database\Eloquent\Model;
 
 class BelongsToResource
 {
@@ -57,7 +55,7 @@ class BelongsToResource
      *
      * @return void
      */
-    public function __construct($resourceClass, EloquentModel $child, $foreignKey, $ownerKey, $relationName)
+    public function __construct($resourceClass, Model $child, $foreignKey, $ownerKey, $relationName)
     {
         $this->resourceClass = $resourceClass;
         $this->request = new Request(new $resourceClass);
