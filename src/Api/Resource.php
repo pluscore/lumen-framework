@@ -26,7 +26,7 @@ abstract class Resource implements Arrayable
      *
      * @var string
      */
-    protected $url;
+    public $url;
 
     /**
      * Query string to the resource.
@@ -63,18 +63,6 @@ abstract class Resource implements Arrayable
     }
 
     /**
-     * Get the url to the resource. Build full url with url and queryt string.
-     *
-     * @return string
-     */
-    public function url()
-    {
-        $query = http_build_query($this->query);
-
-        return $this->url.($query ? "?{$query}" : '');
-    }
-
-    /**
      * Convert the resource to an array.
      *
      * @return array
@@ -91,7 +79,7 @@ abstract class Resource implements Arrayable
      */
     public function newRequest()
     {
-        return new Request(new static);
+        return new Request($this);
     }
 
     /**
@@ -100,7 +88,7 @@ abstract class Resource implements Arrayable
      * @param  array  $attributes
      * @return Resource
      */
-    public function make($attributes = [])
+    public static function make($attributes = [])
     {
         return new static($attributes);
     }

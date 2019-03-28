@@ -15,6 +15,13 @@ class ResourceFaker
     private $resource;
 
     /**
+     * The resource that faked.
+     *
+     * @var Resource
+     */
+    private $request;
+
+    /**
      * Store collection for faked resources.
      *
      * @var Collection
@@ -29,6 +36,7 @@ class ResourceFaker
     public function __construct(Resource $resource)
     {
         $this->resource = $resource;
+        $this->request = $this->resource->newRequest();
         $this->collection = collect();
     }
 
@@ -40,7 +48,7 @@ class ResourceFaker
      */
     public function include($value)
     {
-        $this->resource->query['include'] = $value;
+        $this->request->include($value);
 
         return $this;
     }
@@ -59,7 +67,7 @@ class ResourceFaker
         );
 
         $this->collection->push([
-            'url' => $this->resource->url(),
+            'url' => $this->request->url(),
             'resource' => $resource = $this->resource->make($attributes),
         ]);
 
@@ -69,13 +77,13 @@ class ResourceFaker
     /**
      * Get faked resources for the resource.
      *
-     * @param  Resource $resource
+     * @param  Request $request
      * @return Collection
      */
-    public function get(Resource $resource)
+    public function get(Request $request)
     {
-        return $this->collection->filter(function ($item) use ($resource) {
-            return Str::contains($resource->url(), $item['url']);
+        return $this->collection->filter(function ($item) use ($request) {
+            return Str::contains($request->url(), $item['url']);
         })->pluck('resource');
     }
 }

@@ -7,8 +7,19 @@ use Plus\Api\Resource;
 
 class UserResource extends Resource
 {
-    protected $path = 'http://server/api/users';
+    /**
+     * The url to the resource.
+     *
+     * @var string
+     */
+    public $url = 'http://server/api/users';
 
+    /**
+     * Generate a mock attributes for a resource.
+     *
+     * @param  Generator $faker
+     * @return array
+     */
     public static function mock(Generator $faker)
     {
         return [

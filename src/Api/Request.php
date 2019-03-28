@@ -9,11 +9,25 @@ use Zttp\Zttp;
 class Request
 {
     /**
-     * The resource that requesting.
+     * The resource class that requesting.
      *
      * @var Resource
      */
     private $resource;
+
+    /**
+     * The http url to the resource.
+     *
+     * @var string
+     */
+    protected $url;
+
+    /**
+     * Query string to the resource.
+     *
+     * @var array
+     */
+    protected $query;
 
     /**
      * Construct Request
@@ -23,6 +37,8 @@ class Request
     public function __construct(Resource $resource)
     {
         $this->resource = $resource;
+        $this->url = $this->resource->url;
+        $this->query = $this->resource->query;
     }
 
     /**
@@ -33,7 +49,7 @@ class Request
      */
     public function include($include)
     {
-        $this->resource->query['include'] = $include;
+        $this->query['include'] = $include;
 
         return $this;
     }
@@ -47,9 +63,21 @@ class Request
      */
     public function filter($key, $value)
     {
-        $this->resource->query['filter'][$key] = $value;
+        $this->query['filter'][$key] = $value;
 
         return $this;
+    }
+
+    /**
+     * Get the url to the resource. Build full url with url and queryt string.
+     *
+     * @return string
+     */
+    public function url()
+    {
+        $query = http_build_query($this->query);
+
+        return $this->url.($query ? "?{$query}" : '');
     }
 
     /**
@@ -80,7 +108,7 @@ class Request
     public function get()
     {
         return $this->isFaking() ?
-            $this->getFaker()->get($this->resource) : $this->send();
+            $this->getFaker()->get($this) : $this->send();
     }
 
     /**
@@ -90,7 +118,7 @@ class Request
      */
     public function send()
     {
-        $response = Zttp::withHeader(['Accept' => 'application/json'])->get($this->resource->url());
+        $response = Zttp::withHeaders(['Accept' => 'application/json'])->get($this->url());
 
         if ($response->isOk()) {
             return collect($response->json()['data'])->map(function ($item) {
@@ -98,6 +126,6 @@ class Request
             });
         }
 
-        throw new RuntimeException($response->json());
+        throw new RuntimeException($response->body());
     }
 }
