@@ -3,14 +3,14 @@
 namespace Plus\Testing;
 
 use App\Exceptions\Handler;
-use Plus\Auth\Facades\Auth;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use PHPUnit\Framework\Assert as PHPUnit;
-use Plus\Auth\User;
 use Mockery;
 
 abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
 {
+    use Traits\InteractsWithAuthService;
+
     /**
      * Mock a given class instance in the container.
      */
@@ -54,56 +54,6 @@ abstract class TestCase extends \Laravel\Lumen\Testing\TestCase
                 throw $e;
             }
         });
-
-        return $this;
-    }
-
-    public function makeUser($overrides = [])
-    {
-        $faker = app(\Faker\Generator::class);
-
-        return new User(array_merge([
-            'id' => $faker->uuid,
-            'name' => $faker->name,
-            'email' => $faker->email,
-            'publishers' => []
-        ], $overrides));
-    }
-
-    public function actingAsGuest()
-    {
-        Auth::shouldReceive('user')->andReturn(null);
-
-        return $this;
-    }
-
-    public function actingAsUser()
-    {
-        $this->user = $this->makeUser();
-
-        Auth::shouldReceive('user')->andReturn($this->user);
-
-        return $this;
-    }
-
-    public function actingAsAdmin()
-    {
-        $this->user = $this->makeUser(['is_admin' => true]);
-
-        Auth::shouldReceive('user')->andReturn($this->user);
-
-        return $this;
-    }
-
-    public function actingAsOfficerOf($publisherId)
-    {
-        $this->user = $this->makeUser([
-            'publishers' => [
-                ['id' => $publisherId]
-            ]
-        ]);
-
-        Auth::shouldReceive('user')->andReturn($this->user);
 
         return $this;
     }
